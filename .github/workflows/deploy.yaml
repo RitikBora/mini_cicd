@@ -3,7 +3,7 @@ name: Kubernetes Rollout on Docker Image Push
 on:
   pull_request:
     branches:
-      - main  # Trigger on pull request targeting the main branch
+      - develop  # Trigger on pull request targeting the main branch
 
 jobs:
   kubernetes-rollout:
@@ -31,7 +31,7 @@ jobs:
       # Configure kubectl using AWS CLI (No need for manual KUBECONFIG setup)
       - name: Configure kubectl with EKS credentials
         run: |
-          aws eks update-kubeconfig --name your-cluster-name --region ${{ secrets.AWS_REGION }}
+          aws eks update-kubeconfig --name mini_eks --region ${{ secrets.AWS_REGION }}
 
       # Rollout restart the Kubernetes deployment to use the latest image
       - name: Rollout restart for deployment
