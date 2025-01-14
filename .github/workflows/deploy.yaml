@@ -2,6 +2,7 @@ name: Kubernetes Rollout on Docker Image Push
 
 on:
   pull_request:
+    branches:
       - main
 
 jobs:
