@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: react-frontend
+spec:
+  replicas: 2  # Number of replicas (pods)
+  selector:
+    matchLabels:
+      app: react-frontend
+  template:
+    metadata:
+      labels:
+        app: react-frontend
+    spec:
+      containers:
+      - name: react-frontend
+        image: v3n0m11/frontend_image:latest  # Docker image with latest tag
+        imagePullPolicy: Always  # Ensures Kubernetes pulls the latest image on deployment restart
+        ports:
+        - containerPort: 5173  # Port on which your React app is running inside the container
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "100m"
+          limits:
+            memory: "200Mi"
+            cpu: "200m"
