@@ -25,18 +25,22 @@ jobs:
       - name: Build frontend Docker image
         run: |
           docker build -f frontend/Dockerfile -t v3n0m11/frontend_image ./frontend
+
       - name: Build backend Docker image
         run: |
           docker build -f backend/Dockerfile -t v3n0m11/backend_image ./backend
+
       - name: Push frontend Docker image
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/frontend_image
+
       - name: Push backend Docker image
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/backend_image
-          
+
   kubernetes-rollout:
     runs-on: ubuntu-latest  # Runner environment
+    needs: docker_build  # Ensures this job runs after the docker_build job
 
     steps:
       # Checkout the repository code
