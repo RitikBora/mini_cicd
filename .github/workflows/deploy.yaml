@@ -1,45 +1,29 @@
-name: "MERN CI-CD Deploy File"
+name: Kubernetes Rollout on Docker Image Push
 
 on:
-  pull_request:
+  push:
     branches:
-      - main
+      - main  # Trigger on push to the main branch
 
 jobs:
-  kubernetes_deploy:
-    runs-on: ubuntu-latest
+  kubernetes-rollout:
+    runs-on: ubuntu-latest  # Runner environment
 
     steps:
-      # Checkout the repository
-      - name: Checkout code
+      # Checkout the repository code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Configure AWS credentials using the IAM role
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v3
+      # Set up kubectl
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
         with:
-          role-to-assume: arn:aws:iam::203918850897:user/eksAdmin
-          aws-region: ap-south-1
+          version: 'latest'
 
-      # Update kubeconfig for Kubernetes cluster access
-      - name: Update kubeconfig
-        run: |
-          aws eks update-kubeconfig --region ap-south-1 --name mini_eks --role-arn arn:aws:iam::203918850897:user/eksAdmin
+      # Set KUBECONFIG from GitHub secret and save it as a file
+      - name: Set KUBECONFIG from secret
+        run: echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
 
-      # Debug Kubernetes Configuration
-      - name: Debug Kubernetes Configuration
-        run: |
-          kubectl config view
-          kubectl cluster-info
-          kubectl get nodes
-
-      # Deploy to Kubernetes
-      - name: Deploy to Kubernetes
-        run: |
-          kubectl apply -f k8s/deployment.yaml
-          kubectl apply -f k8s/service.yaml
-
-      # Verify Deployment
-      - name: Verify Deployment
-        run: |
-          kubectl rollout status deployment/react-frontend
+      # Rollout restart the Kubernetes deployment to use the latest image
+      - name: Rollout restart for deployment
+        run: kubectl rollout restart deployment react-frontend

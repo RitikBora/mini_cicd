@@ -14,9 +14,10 @@ spec:
     spec:
       containers:
       - name: react-frontend
-        image: v3n0m11/frontend_image:latest  # Replace with your actual Docker image
+        image: v3n0m11/frontend_image:latest  # Docker image with latest tag
+        imagePullPolicy: Always  # Ensures Kubernetes pulls the latest image on deployment restart
         ports:
-        - containerPort: 5173  # The port on which your React app is running inside the container
+        - containerPort: 5173  # Port on which your React app is running inside the container
         resources:
           requests:
             memory: "100Mi"
