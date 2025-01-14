@@ -3,7 +3,11 @@ name: Kubernetes Rollout on Docker Image Push
 on:
   pull_request:
     branches:
-      - main
+      - main  # Trigger on pull request targeting the main branch
+  push:
+    branches:
+      - develop
+
 
 jobs:
   kubernetes-rollout:
@@ -20,9 +24,11 @@ jobs:
         with:
           version: 'latest'
 
-      # Set KUBECONFIG from GitHub secret and save it as a file
+      # Create .kube directory and set KUBECONFIG from secret
       - name: Set KUBECONFIG from secret
-        run: echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+        run: |
+          mkdir -p $HOME/.kube  # Create the .kube directory if it doesn't exist
+          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
 
       # Rollout restart the Kubernetes deployment to use the latest image
       - name: Rollout restart for deployment
